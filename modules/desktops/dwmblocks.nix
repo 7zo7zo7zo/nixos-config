@@ -1,6 +1,11 @@
 { inputs, ... }:
 
 {
+  flake-file.inputs.dwmblocks = {
+    url = "github:7zo7zo7zo/dwmblocks";
+    flake = false;
+  };
+
 	flake.aspects = { aspects, ... }: {
 		dwmblocks = {
 			# This is already imported in dwm.nix, multiple includes breaks because it declares options

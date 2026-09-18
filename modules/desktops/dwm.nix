@@ -1,12 +1,17 @@
 { inputs, ... }:
 
 {
+  flake-file.inputs.dwm = {
+    url = "github:7zo7zo7zo/dwm-temp";
+    flake = false;
+  };
+
 	flake.aspects = { aspects, ... }: {
 		dwm = {
 			includes = with aspects; [ dwmblocks x11 ];
 
-			nixos = { pkgs, ... }: {
-				services = {
+      nixos = { pkgs, ... }: {
+        services = {
 					displayManager = {
 						defaultSession = "none+dwm"; # doesn't do anything
 					};

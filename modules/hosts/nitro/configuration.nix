@@ -36,6 +36,11 @@
 					#steam
 					#emulator
 					direnv
+          vivado
+          batsignal
+          #emacs
+          #ios
+          java
 				];
 
 				nixos = {config, pkgs, ...}: {
@@ -76,11 +81,19 @@
 
 							intelBusId = "PCI:0:2:0";
 							nvidiaBusId = "PCI:1:0:0";
-						};
-					};
+            };
+          };
 
-					environment.systemPackages = with pkgs; [
-						libinput
+          services.udev.extraHwdb = ''
+            evdev:atkbd:*
+              KEYBOARD_KEY_3a=esc
+
+            evdev:input:b*v*p*
+              KEYBOARD_KEY_70039=esc
+          '';
+
+          environment.systemPackages = with pkgs; [
+            libinput
 					];
 
           environment = {
@@ -173,9 +186,9 @@
 
 					home.packages = with pkgs; [
 						pavucontrol
-# gimp
-# krita
-# screenkey
+            # gimp
+            # krita
+            # screenkey
 					];
 
 					services.udiskie = {

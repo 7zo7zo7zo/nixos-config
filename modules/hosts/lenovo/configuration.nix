@@ -29,6 +29,7 @@
 					nnn
 					syncthing
 					fastfetch
+          batsignal
 				];
 
 				nixos = {config, pkgs, ...}: {

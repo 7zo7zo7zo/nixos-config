@@ -1,6 +1,17 @@
 { inputs, ... }:
 
 {
+  flake-file = {
+    description = "My NixOS/home-manager configurations";
+
+    inputs = {
+      home-manager = {
+        url = "github:nix-community/home-manager";
+        inputs.nixpkgs.follows = "nixpkgs";
+      };
+    };
+  };
+
 	flake.aspects.base = {
 		nixos = { pkgs, ... }: {
 			# =========================================================================

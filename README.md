@@ -7,6 +7,7 @@ My dendritic NixOS config
 - https://github.com/DoctorDalek1963/nixos-config
 - https://github.com/BreadOnPenguins/scripts
 - https://tduyng.com (neovim)
+- https://github.com/shebpamm/dots-nix
 
 ## Installation
 ```bash
@@ -51,6 +52,13 @@ cat /mnt/home/$NIXUSER/nixos-config/modules/hosts/$HOST/_hardware-configuration.
 nixos-install --flake /mnt/home/$NIXUSER/nixos-config#$HOST
 nixos-enter --root /mnt -c "passwd $NIXUSER"
 reboot
+```
+
+## Useful commands
+```bash
+nix run .#write-flake # whenever you need to regen flake.nix
+
+nix flake check # will make sure your flake.nix is up-to-date
 ```
 
 ## Wallpaper
