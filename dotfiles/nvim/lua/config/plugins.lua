@@ -104,6 +104,7 @@ cmp.setup({
   snippets = { preset = 'luasnip' },
   sources = {
     default = { 'lsp', 'path', 'snippets', 'buffer' },
+    --[[
     per_filetype = {
       org = {'orgmode'}
     },
@@ -114,6 +115,7 @@ cmp.setup({
         fallbacks = { 'buffer' },
       },
     },
+    ]]--
   },
   fuzzy = { implementation = "prefer_rust_with_warning" },
 })

@@ -26,6 +26,10 @@
     };
     import-tree.url = "github:denful/import-tree";
     nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst";
+    odin-ts-mode = {
+      url = "github:Sampie159/odin-ts-mode";
+      flake = false;
+    };
     st = {
       url = "github:7zo7zo7zo/st-temp";
       flake = false;

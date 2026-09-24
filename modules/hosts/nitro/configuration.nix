@@ -32,13 +32,13 @@
 					fastfetch
 					minecraft
 					office
-					#doom
+					doom
 					#steam
 					#emulator
 					direnv
           vivado
           batsignal
-          #emacs
+          emacs
           #ios
           java
 				];

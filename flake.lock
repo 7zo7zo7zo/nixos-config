@@ -130,6 +130,22 @@
         "url": "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst"
       }
     },
+    "odin-ts-mode": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1790011603,
+        "narHash": "sha256-/Zh1Xn5VknOqeKs7HTkMXS8sCq9NjZ56CtfKVWC8nyc=",
+        "owner": "Sampie159",
+        "repo": "odin-ts-mode",
+        "rev": "6a28b1c35f99b879d288056ce0fcaa15d222ba58",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Sampie159",
+        "repo": "odin-ts-mode",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "dwm": "dwm",
@@ -140,6 +156,7 @@
         "home-manager": "home-manager",
         "import-tree": "import-tree",
         "nixpkgs": "nixpkgs",
+        "odin-ts-mode": "odin-ts-mode",
         "st": "st"
       }
     },
