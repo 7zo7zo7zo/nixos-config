@@ -6,3 +6,6 @@ switch:
 
 gc:
 	sudo nix-collect-garbage --delete-old
+
+write-flake:
+	nix run {{ROOT_DIR}}#write-flake

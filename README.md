@@ -55,6 +55,7 @@ reboot
 ```
 
 ## Useful commands
+### TODO FIX THIS!
 ```bash
 nix run .#write-flake # whenever you need to regen flake.nix
 

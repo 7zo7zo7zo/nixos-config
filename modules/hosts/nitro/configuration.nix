@@ -33,12 +33,13 @@
 					minecraft
 					office
 					doom
-					#steam
-					#emulator
+					steam
+					emulator
 					direnv
           vivado
           batsignal
           emacs
+          #doom-emacs
           #ios
           java
 				];
@@ -182,7 +183,6 @@
 
 				homeManager = { pkgs, ... }: {
 					home.stateVersion = "26.05";
-					inherit primaryUser;
 
 					home.packages = with pkgs; [
 						pavucontrol

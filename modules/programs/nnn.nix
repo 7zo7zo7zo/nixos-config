@@ -7,7 +7,7 @@
 				#scripts
 			];
 
-			homeManager = { pkgs, lib, ... }: {
+			homeManager = { pkgs, lib, config, ... }: {
 				my.scripts = [ "f" ];
 
 				programs.nnn = {
@@ -53,7 +53,10 @@
 				xdg.desktopEntries.nnn = {
 					name = "nnn";
 					genericName = "File Manager";
-					exec = "xdg-terminal-exec -- f %f";
+					#exec = "xdg-terminal-exec -- f %f";
+          #exec = "xdg-terminal-exec -- ${config.home.homeDirectory}/.local/bin/f %f";
+          #exec = "${config.home.homeDirectory}/.local/bin/f %f";
+          exec = "f %f";
 					terminal = false;
 					noDisplay = true;
 					mimeType = [

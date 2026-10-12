@@ -21,6 +21,20 @@
 (column-number-mode)
 (global-display-line-numbers-mode t)
 
+;; Transparent background
+;; Set transparency for the current frame
+(set-frame-parameter nil 'alpha-background 90)
+
+;; Apply transparency to all future frames
+(add-to-list 'default-frame-alist '(alpha-background . 90))
+
+(setq default-frame-alist
+      (cons '(alpha-background . 70)
+            (assq-delete-all 'alpha-background default-frame-alist)))
+
+(add-to-list 'default-frame-alist
+             '(alpha-background . 90))
+
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
                  term-mode-hook

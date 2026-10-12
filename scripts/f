@@ -1,2 +1,4 @@
 #!/bin/sh
-exec "$SHELL" -ic 'n -Aa "$1"; exec "$SHELL" -i' _ "$1"
+
+exec xdg-terminal-exec -- "$SHELL" -ic \
+  'n -Aa "$1"; exec "$SHELL" -i' _ "$1"

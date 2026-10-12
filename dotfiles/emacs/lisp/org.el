@@ -67,17 +67,17 @@
            (file "inbox.org")
            "* %?\n  Captured: %U")
 
-           ("t" "Task" entry
+          ("t" "Task" entry
            (file "inbox.org")
            "* TODO %?\n  Captured: %U")
 
           ("e" "Event" entry
            (file "events.org")
-           "* %^{Event}\n  %^T\n  %?")
+           "* %?\n  %^T")
 
           ("E" "Multi-day event" entry
            (file "events.org")
-         "* %^{Event}\n%^{Start}t--%^{End}t\n%?")))
+           "* %?\n  %^{Start}t--%^{End}t")))
 
   (my/org-font-setup))
 
@@ -99,7 +99,7 @@
   :init
   (setq org-roam-v2-ack t)
   :custom
-  (org-roam-directory "~/Documents/Org")
+  (org-roam-directory "~/Documents/Org/Roam")
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n i" . org-roam-node-insert))
