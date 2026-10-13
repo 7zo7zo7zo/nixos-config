@@ -1,16 +1,10 @@
 {
-	flake.aspects = { aspects, ... }: {
-		nvim = {
-			includes = with aspects; [ dotfiles ];
+  flake.aspects.nvim.homeManager = { pkgs, ... }: {
+    my.dotfiles = [ "nvim" ];
 
-			homeManager = { pkgs, ... }: {
-				my.dotfiles = [ "nvim" ];
-
-				home.packages = with pkgs; [
-					neovim
-          tree-sitter
-				];
-			};
-		};
-	};
+    home.packages = with pkgs; [
+      neovim
+      tree-sitter
+    ];
+  };
 }

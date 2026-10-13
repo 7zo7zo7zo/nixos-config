@@ -1,18 +1,25 @@
 { inputs, ... }:
 
 {
+  my.hosts.nitro = {
+    module = "host-nitro";
+    system = "x86_64-linux";
+    primaryUser = "steve";
+    hardware = ./_hardware-configuration.nix;
+    stateVersion = "26.05";
+  };
+
 	flake = {
 		aspects = { aspects, ... }: {
-			host-nitro = let
-				primaryUser = "steve";
-			in {
+			host-nitro = {
 				description = "Configuration for my Acer Nitro 5 AN515-54";
 
 				includes = with aspects; [
+          host
 					base
-					user
 					zsh
 					drives
+          dotfiles
 					dwm
 					audio
 					bluetooth
@@ -45,11 +52,6 @@
 				];
 
 				nixos = {config, pkgs, ...}: {
-					imports = [
-						./_hardware-configuration.nix
-						inputs.home-manager.nixosModules.home-manager
-					];
-
 					# cat /proc/driver/nvidia/gpus/0000:01:00.0/power
 					# Runtime D3 status:          Enabled (fine-grained)
 					boot.kernelParams = [
@@ -166,24 +168,9 @@
 					services.udisks2.enable = true;
 
 					environment.localBinInPath = true;
-
-					networking.hostName = "nitro";
-					system.stateVersion = "26.05";
-					inherit primaryUser;
-
-					home-manager = {
-						useGlobalPkgs = true;
-						useUserPackages = true;
-
-						users.${config.primaryUser} = {
-							imports = [ aspects.host-nitro.modules.homeManager ];
-						};
-					};
 				};
 
 				homeManager = { pkgs, ... }: {
-					home.stateVersion = "26.05";
-
 					home.packages = with pkgs; [
 						pavucontrol
             # gimp
@@ -204,12 +191,6 @@
 					};
 				};
 			};
-		};
-
-		nixosConfigurations.nitro = inputs.nixpkgs.lib.nixosSystem {
-			system = "x86_64-linux";
-
-			modules = [ inputs.self.modules.nixos.host-nitro ];
 		};
 	};
 }
