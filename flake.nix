@@ -13,9 +13,13 @@
   };
 
   inputs = {
+    au-themes = {
+      url = "github:szymonwilczek/au-themes";
+      flake = false;
+    };
     dwm = {
       url = "github:7zo7zo7zo/dwm-temp";
-      flake = false;
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     dwmblocks = {
       url = "github:7zo7zo7zo/dwmblocks";
@@ -36,10 +40,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     import-tree.url = "github:denful/import-tree";
-    nix-doom-emacs-unstraightened = {
-      url = "github:marienz/nix-doom-emacs-unstraightened";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nixpkgs.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.zst";
     odin-ts-mode = {
       url = "github:Sampie159/odin-ts-mode";
@@ -47,7 +47,7 @@
     };
     st = {
       url = "github:7zo7zo7zo/st-temp";
-      flake = false;
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 }

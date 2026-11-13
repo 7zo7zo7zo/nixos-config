@@ -1,4 +1,5 @@
-;;; completion.el --- Completion configuration -*- lexical-binding: t; -*-
+;;; my-completion.el --- Completion configuration -*- lexical-binding: t; -*-
+(provide 'my-completion)
 
 ;; Emacs ships with several completion engines, but none are as
 ;; flexible as Vertico.  This is the secret sauce that powers the
@@ -24,7 +25,7 @@
   ;; binding available in the *Completions* buffer, add it to the
   ;; `completion-list-mode-map'.
   :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
+              ("M-A" . marginalia-cycle))
   :init
   ;; Marginalia must be activated in the :init section of use-package
   ;; such that the mode gets enabled right away.  Note that this

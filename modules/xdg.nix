@@ -57,8 +57,9 @@
 					"x-scheme-handler/http" = "firefox.desktop";
 					"x-scheme-handler/https" = "firefox.desktop";
 
-					"text/markdown" = "nvim.desktop";
-					"text/x-markdown" = "nvim.desktop";
+					"text/markdown" = "my-emacs.desktop";
+					"text/x-markdown" = "my-emacs.desktop";
+          "text/x-log" = "my-emacs.desktop";
 				};
 			};
 		};

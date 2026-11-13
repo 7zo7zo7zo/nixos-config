@@ -1,15 +1,11 @@
 {
-	flake.aspects = { aspects, ... }: {
-		fastfetch = {
-			#includes = with aspects; [ dotfiles ];
+  flake.aspects.fastfetch.homeManager = { pkgs, ... }: {
+    my.dotfiles = [ "fastfetch" ];
 
-			homeManager = { pkgs, ... }: {
-				my.dotfiles = [ "fastfetch" ];
-
-				home.packages = with pkgs; [
-					fastfetch
-				];
-			};
-		};
-	};
+    home.packages = with pkgs; [
+      (fastfetch.override {
+       extraRuntimeDependencies = [ elfutils ];
+      })
+    ];
+  };
 }

@@ -3,31 +3,37 @@
 {
   flake-file.inputs.st = {
     url = "github:7zo7zo7zo/st-temp";
-    flake = false;
+    inputs.nixpkgs.follows = "nixpkgs";
   };
 
-	flake.aspects.st.homeManager = { pkgs, ... }: {
-    home.packages = with pkgs; [
-      (pkgs.st.overrideAttrs (_: {
-        src = inputs.st;
-      }))
-    ];
+  flake.aspects.st = {
+    nixos = {
+      nixpkgs.overlays = [
+        inputs.st.overlays.default
+      ];
+    };
 
-    xdg.desktopEntries.st = {
-      name = "st";
-      genericName = "Terminal";
-      comment = "st is a simple terminal implementation for X";
+    homeManager = { pkgs, ... }: {
+      home.packages = with pkgs; [
+        st
+      ];
 
-      exec = "st";
-      icon = "utilities-terminal";
-      terminal = false;
-      type = "Application";
+      xdg.desktopEntries.st = {
+        name = "st";
+        genericName = "Terminal";
+        comment = "st is a simple terminal implementation for X";
 
-      categories = [ "System" "TerminalEmulator" ];
+        exec = "st";
+        icon = "utilities-terminal";
+        terminal = false;
+        type = "Application";
 
-      settings = {
-        TryExec = "st";
-        StartupWMClass = "st-256color";
+        categories = [ "System" "TerminalEmulator" ];
+
+        settings = {
+          TryExec = "st";
+          StartupWMClass = "st-256color";
+        };
       };
     };
   };

@@ -1,0 +1,3 @@
+[submodule "dotfiles/emacs/dotfiles/emacs/themes/au-themes"]
+	path = dotfiles/emacs/dotfiles/emacs/themes/au-themes
+	url = https://github.com/szymonwilczek/au-themes

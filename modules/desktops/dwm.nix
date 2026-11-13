@@ -3,7 +3,8 @@
 {
   flake-file.inputs.dwm = {
     url = "github:7zo7zo7zo/dwm-temp";
-    flake = false;
+    inputs.nixpkgs.follows = "nixpkgs";
+    #flake = false;
   };
 
 	flake.aspects = { aspects, ... }: {
@@ -11,6 +12,10 @@
 			includes = with aspects; [ dwmblocks x11 ];
 
       nixos = { pkgs, ... }: {
+        nixpkgs.overlays = [
+          inputs.dwm.overlays.default
+        ];
+
         services = {
 					displayManager = {
 						defaultSession = "none+dwm"; # doesn't do anything
@@ -22,12 +27,7 @@
 						displayManager = {
 							startx.enable = true;
 						};
-						windowManager.dwm = {
-							enable = true;
-							package = pkgs.dwm.overrideAttrs {
-								src = inputs.dwm;
-							};
-						};
+						windowManager.dwm.enable = true;
 					};
 					dunst.enable = true;
 				};
@@ -68,7 +68,9 @@
 				];
 
 				fonts.packages = with pkgs; [
-					nerd-fonts.jetbrains-mono
+					#nerd-fonts.jetbrains-mono
+                    aporetic
+                    nerd-fonts.symbols-only
 				];
 
 				# Some programs need SUID wrappers, can be configured further or are
@@ -102,6 +104,7 @@
 						dwmblocks &
 						xwallpaper --center ~/nixos-config/wallpapers/light_by_zim2687_d6tq1a1.jpg
             autorandr -c
+            emacs --eval '(org-capture)' &
 					'';
 				};
 

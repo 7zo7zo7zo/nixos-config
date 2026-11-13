@@ -21,6 +21,7 @@
 					drives
           dotfiles
 					dwm
+          #exwm
 					audio
 					bluetooth
 					printing	
@@ -38,23 +39,29 @@
 					syncthing
 					fastfetch
 					minecraft
-					office
-					doom
-					steam
-					emulator
+					#office
+					#doom
+					#steam
+					#emulator
 					direnv
-          vivado
+          #vivado
           batsignal
           emacs
           #doom-emacs
-          #ios
+          ios
           java
+          qemu
+          mysql
+          #godot
 				];
 
 				nixos = {config, pkgs, ...}: {
+                    boot.kernelModules = [ "dwc2" "g_ether" ];
+                
 					# cat /proc/driver/nvidia/gpus/0000:01:00.0/power
 					# Runtime D3 status:          Enabled (fine-grained)
 					boot.kernelParams = [
+                        "modules-load=dwc2,g_ether"
 						"nvidia.NVreg_EnableGpuFirmware=0"
 						#"nvidia.NVreg_DynamicPowerManagement=0x02"
 						#"nvidia.NVreg_PreserveVideoMemoryAllocations=1"
@@ -87,12 +94,20 @@
             };
           };
 
+          # services.udev.extraHwdb = ''
+          #   evdev:atkbd:*
+          #     KEYBOARD_KEY_3a=esc
+          #
+          #   evdev:input:b*v*p*
+          #     KEYBOARD_KEY_70039=esc
+          # '';
+
           services.udev.extraHwdb = ''
             evdev:atkbd:*
-              KEYBOARD_KEY_3a=esc
+              KEYBOARD_KEY_3a=leftctrl
 
             evdev:input:b*v*p*
-              KEYBOARD_KEY_70039=esc
+              KEYBOARD_KEY_70039=leftctrl
           '';
 
           environment.systemPackages = with pkgs; [

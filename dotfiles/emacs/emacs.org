@@ -1,0 +1,481 @@
+#+title: GNU Emacs Config
+
+This is my literate emacs configuration.
+
+* Emacs early initialization settings (=early-init.el=)
+
+This is the first file that Emacs reads when starting up. It should contain code that does not depend on any packages. This file is meant to hold a few basic settings before Emacs produces the initial frame and evaluates =init.el= .
+
+** Basic early init settings
+
+#+begin_src emacs-lisp :tangle "early-init.el"
+   ;;; early-init.el --- Early initialization -*- lexical-binding: t; -*-
+  (setq ring-bell-function 'ignore)
+
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+
+  (startup-redirect-eln-cache
+   (expand-file-name "~/.local/state/emacs/var/eln-cache/"))
+#+end_src
+
+* Emacs initialization settings (=init.el=)
+
+** Basic settings
+
+#+begin_src emacs-lisp :tangle "init.el"
+   ;;; init.el --- Main configuration -*- lexical-binding: t; -*-
+
+  (require 'use-package)
+  ;; Packages are installed through Nix, so use-package should only
+  ;; configure them and should not try to download them.
+  (setq use-package-always-ensure nil)
+
+  (setq inhibit-startup-screen t
+        split-width-threshold nil)
+
+  ;; Set tab width to 2 spaces
+  (setq-default
+   indent-tabs-mode nil
+   tab-width 2
+   standard-indent 2)
+
+  ;; Make undo/redo behave the way you expect
+  (keymap-global-set "C-/" #'undo-only)
+#+end_src
+
+** No-littering Settings
+
+#+begin_src emacs-lisp :tangle "init.el"
+  (use-package no-littering
+    :init
+    (setq no-littering-etc-directory
+          (expand-file-name "~/.local/state/emacs/etc/"))
+    (setq no-littering-var-directory
+          (expand-file-name "~/.local/state/emacs/var/")))
+#+end_src
+
+** Start Emacs server
+
+#+begin_src emacs-lisp :tangle "init.el"
+  (use-package server
+    :config
+    (unless (server-running-p)
+      (server-start)))
+#+end_src
+** Require custom modules
+  
+#+begin_src emacs-lisp :tangle "init.el"
+  (add-to-list 'load-path
+               (expand-file-name "modules" user-emacs-directory))
+
+  (require 'my-theme)
+  (require 'my-org)
+  (require 'my-completion)
+  (require 'my-project)
+#+end_src
+
+* Emacs theme settings (=modules/my-theme.el=)
+
+#+begin_src emacs-lisp :tangle "modules/my-theme.el"
+  ;;; my-theme.el --- Theming settings -*- lexical-binding: t; -*-
+  (provide 'my-theme)
+#+end_src
+
+** Set basic theming settings
+#+begin_src emacs-lisp :tangle "modules/my-theme.el"
+  (defvar my/default-font-size 160)
+
+  (set-face-attribute 'default nil
+                      :family "Aporetic Serif Mono"
+                      :height my/default-font-size
+                      :weight 'normal)
+
+  (set-face-attribute 'fixed-pitch nil
+                      :family "Aporetic Serif Mono")
+
+  (set-face-attribute 'variable-pitch nil
+                      :family "Aporetic Sans")
+#+end_src
+
+#+begin_src emacs-lisp :tangle "modules/my-theme.el"
+  (use-package au-themes
+    :config
+    (load-theme 'au-herbarium-night t))
+#+end_src
+
+#+begin_src emacs-lisp :tangle "modules/my-theme.el"
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1))
+#+end_src
+
+* Org-mode configution (=modules/my-org.el=)
+
+#+begin_src emacs-lisp :tangle "modules/my-org.el"
+  ;;; my-org.el --- Org-mode configuration -*- lexical-binding: t; -*-
+  (provide 'my-org)
+#+end_src
+
+** Org-mode setup
+Simple function that is a hook for =org-mode=.
+
+#+begin_src emacs-lisp :tangle "modules/my-org.el"
+  (defun my/org-mode-setup ()
+  (org-indent-mode) ; indents text and hides leading asterisks
+  (variable-pitch-mode 1)
+  (visual-line-mode 1)) ; makes text wrap
+#+end_src
+
+** Org-mode font setup
+Function for some font related settings.
+
+#+begin_src emacs-lisp :tangle "modules/my-org.el"
+  (defun my/org-font-setup ()
+    ;; Replace list hyphens with bullets.
+    (font-lock-add-keywords
+     'org-mode
+     '(("^ *\\([-]\\) "
+        (0 (prog1 ()
+             (compose-region (match-beginning 1)
+                             (match-end 1)
+                             "•"))))))
+
+    ;; Set heading sizes.
+    (dolist (face '((org-level-1 . 1.9)
+                    (org-level-2 . 1.8)
+                    (org-level-3 . 1.7)
+                    (org-level-4 . 1.6)
+                    (org-level-5 . 1.5)
+                    (org-level-6 . 1.4)
+                    (org-level-7 . 1.3)
+                    (org-level-8 . 1.2)))
+      (set-face-attribute (car face) nil
+  			                  :weight 'regular
+  			                  :height (cdr face)))
+
+    ;; Keep code-related Org elements fixed-pitch.
+    (set-face-attribute 'org-block nil
+                        :foreground nil
+                        :inherit 'fixed-pitch)
+    (set-face-attribute 'org-table nil
+                        :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-formula nil
+                        :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil
+                        :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-verbatim nil
+                        :inherit '(shadow fixed-pitch)
+                        :height 'unspecified)
+    (set-face-attribute 'org-special-keyword nil
+                        :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil
+                        :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-checkbox nil
+                        :inherit 'fixed-pitch)
+    (set-face-attribute 'line-number nil
+                        :inherit 'fixed-pitch)
+    (set-face-attribute 'line-number-current-line nil
+                        :inherit 'fixed-pitch))
+#+end_src
+
+** =use-package= config
+#+begin_src emacs-lisp :tangle "modules/my-org.el"
+  (use-package org
+    :commands (org-capture org-agenda)
+
+    :bind
+    (("C-c c" . org-capture)
+     ("C-c a" . org-agenda))
+
+    :hook
+    (org-mode . my/org-mode-setup)
+
+    :config
+    (setq org-directory "~/Documents/Org"
+  	org-agenda-files
+  	(list org-directory
+                "~/Documents/Org/Roam")
+
+  	org-agenda-prefix-format
+  	'((agenda . " %i %?-12t% s")
+            (todo   . " %i ")
+            (tags   . " %i ")
+            (search . " %i "))
+
+  	org-ellipsis " ▼"
+  	org-agenda-start-with-log-mode t
+  	org-log-done 'time
+  	org-log-into-drawer t
+  	org-hide-emphasis-markers t
+
+  	org-capture-templates
+  	'(("i" "Inbox" entry
+             (file "refile.org")
+             "* %?")
+
+            ("t" "Task" entry
+             (file "todo.org")
+             "* TODO %?")
+
+            ("e" "Event" entry
+             (file "events.org")
+             "* %^{Event}\n  %^t\n  %?")
+
+            ("E" "Multi-day event" entry
+             (file "events.org")
+             "* %^{Event}\n%^{Start}t--%^{End}t\n%?")))
+
+    (my/org-font-setup))
+#+end_src
+
+** Org-Roam setup
+#+begin_src emacs-lisp :tangle "modules/my-org.el"
+  (use-package org-roam
+  :custom
+  (org-roam-directory (file-truename "~/Documents/Org/Roam"))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today))
+  :config
+  ;; If you're using a vertical completion framework, you might want a more informative completion interface
+  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-db-autosync-mode)
+  ;; If using org-roam-protocol
+  (require 'org-roam-protocol))
+#+end_src
+
+
+
+** Olivetti
+This package is used here to create margins and center text in =org-mode=.
+
+#+begin_src emacs-lisp :tangle "modules/my-org.el"
+  (use-package olivetti
+    :custom
+    (olivetti-body-width 0.7)
+    (olivetti-minimum-body-width 80)
+    (olivetti-recall-visual-line-mode-entry-state t)
+    :hook
+    (org-mode . olivetti-mode))
+#+end_src
+
+#+begin_src emacs-lisp :tangle "modules/my-org.el"
+  (defvar my/firefox-block-timer nil
+  "Timer used to check whether Firefox should be blocked.")
+
+(defun my/firefox-block-if-idle ()
+  "Close Firefox unless an Org clock is running."
+  (interactive)
+  (unless (and (fboundp 'org-clocking-p)
+               (org-clocking-p))
+    (let ((process
+           (start-process "firefox-block" nil
+                          "pkill" "-x" "\\.firefox-wrappe")))
+      (set-process-sentinel process #'ignore))))
+
+(defun my/firefox-check-after-clock ()
+  "Check Firefox shortly after an Org clock stops."
+  (run-at-time 0.5 nil #'my/firefox-block-if-idle))
+
+(add-hook 'org-clock-out-hook
+          #'my/firefox-check-after-clock)
+
+(add-hook 'org-clock-cancel-hook
+          #'my/firefox-check-after-clock)
+
+;; Cancel the previous timer when reloading.
+(when (timerp my/firefox-block-timer)
+  (cancel-timer my/firefox-block-timer))
+
+;; Check after 2 seconds, then every 60 seconds.
+(setq my/firefox-block-timer
+      (run-with-timer 2 60 #'my/firefox-block-if-idle))
+#+end_src
+* Completion settings
+#+begin_src emacs-lisp :tangle "modules/my-completion.el"
+  ;;; my-completion.el --- Completion configuration -*- lexical-binding: t; -*-
+  (provide 'my-completion)
+#+end_src
+** Vertico
+Vertico modern completion UI.
+#+begin_src emacs-lisp :tangle "modules/my-completion.el"
+  ;; Emacs ships with several completion engines, but none are as
+  ;; flexible as Vertico.  This is the secret sauce that powers the
+  ;; Emacs "Command Palette", enabling tab-completion when using "M-x
+  ;; command", `project-find-file', and other minibuffer commands.
+  (use-package vertico
+    :init
+    (vertico-mode)
+    ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
+    (setq vertico-cycle t))
+
+  ;; Persist minibuffer history over Emacs restarts.  Vertico uses this
+  ;; to sort based on history.
+  (use-package savehist
+    :init
+    (savehist-mode))
+#+end_src
+
+** Marginalia
+
+#+begin_src emacs-lisp :tangle "modules/my-completion.el"
+  ;; Marginalia adds, well, marginalia to the Emacs minibuffer,
+  ;; extending Vertico with a ton of rich information.
+  (use-package marginalia
+    :after vertico
+    ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the
+    ;; binding available in the *Completions* buffer, add it to the
+    ;; `completion-list-mode-map'.
+    :bind (:map minibuffer-local-map
+                ("M-A" . marginalia-cycle))
+    :init
+    ;; Marginalia must be activated in the :init section of use-package
+    ;; such that the mode gets enabled right away.  Note that this
+    ;; forces loading the package.
+    (marginalia-mode))
+#+end_src
+
+** Orderless
+#+begin_src emacs-lisp :tangle "modules/my-completion.el"
+  ;; When the minibuffer is open and you're searching for some text,
+  ;; Emacs can be very persnickety about the order in which you type.
+  ;; Orderless laxes this behavior so the search is "fuzzier"; you'll
+  ;; see results more often even if you type things in the wrong order.
+  (use-package orderless
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-overrides '((file (styles basic partial-completion)))))
+#+end_src
+
+** Consult
+#+begin_src emacs-lisp :tangle "modules/my-completion.el"
+  ;; Replace the default Emacs isearch with Consult, which offers a rich
+  ;; minibuffer results window and integration with Orderless.
+  (use-package consult
+    :bind (("C-s" . consult-line)
+           :map minibuffer-local-map
+           ("C-r" . consult-history))
+    :custom
+    (completion-in-region-function #'consult-completion-in-region))
+#+end_src
+
+** Corfu
+#+begin_src emacs-lisp :tangle "modules/my-completion.el"
+  ;; Where Vertico is a completion engine for your Emacs minibuffer,
+  ;; Corfu is a completion engine for your source code.  This package
+  ;; takes the data from things like LSP or Dabbrev and puts those
+  ;; results in a convenient autocomplete.
+  (use-package corfu
+    ;; Recommended: Enable Corfu globally.  This is recommended since
+    ;; Dabbrev can be used globally (M-/).  See also the customization
+    ;; variable `global-corfu-modes' to exclude certain modes.
+    :init
+    (global-corfu-mode)
+    :custom
+    (corfu-auto t)
+    ;; You might want to configure these variables to suit your
+    ;; preferences.  It's recommended to have some amount of delay if
+    ;; you use Corfu with Eglot, otherwise editing performance could
+    ;; suffer.
+    (corfu-auto-delay 0.25)
+    (corfu-auto-prefix 2))
+
+  ;; Enhance Corfu with additional completion functions so that it
+  ;; provides more suggestions.  For example, `cape-dabbrev' looks at
+  ;; words in the current buffer as a source for completions.  There are
+  ;; many more completion functions available than those listed, so it's
+  ;; worth reading through the Cape documentation to discover others
+  ;; that may be useful to your workflow.
+  (use-package cape
+    :init
+    (add-to-list 'completion-at-point-functions #'cape-file)
+    (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+    (add-to-list 'completion-at-point-functions #'cape-elisp-block))
+#+end_src
+
+* Project settings
+Here you will see everything related to programming projects.
+
+#+begin_src emacs-lisp :tangle "modules/my-project.el"
+  ;;; my-project.el --- Project related settings -*- lexical-binding: t; -*-
+  (provide 'my-project)
+#+end_src
+
+** Compile settings
+#+begin_src emacs-lisp :tangle "modules/my-project.el"
+  (use-package compile
+    :hook
+    (compilation-filter . ansi-color-compilation-filter))
+#+end_src
+
+** Elgot
+Elgot is the built-in LSP client for Emacs.
+
+#+begin_src emacs-lisp :tangle "modules/my-project.el"
+  ;; If LSP is your jam, Eglot is your fix. Use the `eglot' command in a
+  ;; programming major mode to boot up a language server and connect it
+  ;; to Emacs.  Eglot does not install language servers for you, so you
+  ;; must have the language server installed for a particular language
+  ;; (e.g. rust-analyzer for Rust) before `eglot' will work its magic.
+  (use-package eglot
+    ;; Uncomment these dotted pairs to automatically activate Eglot when
+    ;; that major mode is active.
+    ;;
+    :hook ((c-ts-mode . eglot-ensure)
+           (c++-ts-mode . eglot-ensure)
+           (odin-ts-mode . eglot-ensure)
+           (nix-ts-mode . eglot-ensure))
+    :bind (("C-c ." . eglot-code-action-quickfix)))
+#+end_src
+
+** Language server setup
+
+#+begin_src emacs-lisp :tangle "modules/my-project.el"
+  (add-to-list 'major-mode-remap-alist
+               '(c-mode . c-ts-mode))
+
+  (add-to-list 'major-mode-remap-alist
+               '(c++-mode . c++-ts-mode))
+
+  (use-package odin-ts-mode
+    :mode "\\.odin\\'")
+
+  (use-package nix-ts-mode
+    :mode "\\.nix\\'")
+#+end_src
+
+** Envrc
+
+#+begin_src emacs-lisp :tangle "modules/my-project.el"
+  (use-package envrc
+    :hook (after-init . envrc-global-mode)
+    :custom
+    (envrc-async t))
+#+end_src
+
+** Breadcrumb
+
+#+begin_src emacs-lisp :tangle "modules/my-project.el"
+  ;; Add breadcrumbs to the top of buffers.  Works great with Eglot.
+  (use-package breadcrumb
+    :config
+    (breadcrumb-mode))
+#+end_src
+
+** Project.el Settings
+
+#+begin_src emacs-lisp :tangle "modules/my-project.el"
+    (use-package project
+  :custom
+  (project-list-file
+    (no-littering-expand-var-file-name "projects"))
+  (project-mode-line t)
+  (project-kill-buffers-display-list t))
+#+end_src
+
+
