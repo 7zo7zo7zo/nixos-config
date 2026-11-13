@@ -43,8 +43,8 @@
   (breadcrumb-mode))
 
 (use-package project
-:custom
-(project-list-file
-  (no-littering-expand-var-file-name "projects"))
-(project-mode-line t)
-(project-kill-buffers-display-list t))
+  :custom
+  (project-list-file
+   (no-littering-expand-var-file-name "projects"))
+  (project-mode-line t)
+  (project-kill-buffers-display-list t))

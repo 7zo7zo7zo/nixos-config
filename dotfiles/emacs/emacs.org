@@ -302,7 +302,7 @@ This package is used here to create margins and center text in =org-mode=.
   (provide 'my-completion)
 #+end_src
 ** Vertico
-Vertico modern completion UI.
+Vertico is a modern completion UI.
 #+begin_src emacs-lisp :tangle "modules/my-completion.el"
   ;; Emacs ships with several completion engines, but none are as
   ;; flexible as Vertico.  This is the secret sauce that powers the
@@ -470,12 +470,12 @@ Elgot is the built-in LSP client for Emacs.
 ** Project.el Settings
 
 #+begin_src emacs-lisp :tangle "modules/my-project.el"
-    (use-package project
-  :custom
-  (project-list-file
-    (no-littering-expand-var-file-name "projects"))
-  (project-mode-line t)
-  (project-kill-buffers-display-list t))
+  (use-package project
+    :custom
+    (project-list-file
+     (no-littering-expand-var-file-name "projects"))
+    (project-mode-line t)
+    (project-kill-buffers-display-list t))
 #+end_src
 
 
